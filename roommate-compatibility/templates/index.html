@@ -8,8 +8,8 @@
     <form method="POST" action="/results" onsubmit="console.log(new FormData(this));">
         {% for q in questions %}
         <label>{{ q }}</label><br>
-        You: <input type="range" name="user_{{ loop.index0 }}" min="1" max="10" required><br>
-        Them: <input type="range" name ="other_{{ loop.index0 }}" min="1" max="10" required><br><br>
+        You: <input type="range" name="user_{{ loop.index0 }}" min="1" max="10" step="1" required><br>
+        Them: <input type="range" name ="other_{{ loop.index0 }}" min="1" max="10" step="1" required><br><br>
     {% endfor %}
     <button type="submit">See Results</button>
     </form>
