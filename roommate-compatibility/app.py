@@ -29,7 +29,11 @@ questions = [
 
 @app.route("/")
 def index():
-    return render_template("index.html", questions = questions)
+    return render_template("index.html")
+
+@app.route("/quiz")
+def quiz():
+    return render_template("quiz.html", questions = questions)
 
 @app.route("/results", methods=["POST"])
 def results():
