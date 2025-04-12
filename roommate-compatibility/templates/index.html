@@ -7,7 +7,7 @@
     <h1>Roommate Compatibility</h1>
     <form method="POST" action="/results">
         {% for q in questions %}
-        <label>{{ q }}</label>label><br>
+        <label>{{ q }}</label><br>
         You: <input type="range" name="user_{{ loop.index0 }}" min="1" max="10" required><br>
         Them: <input type="range" name ="other_{{ loop.index0 }}" min="1" max="10" required><br><br>
     {% endfor %}
