@@ -1,5 +1,7 @@
 # bitcamp_change
-Bitcamp 2025 
+for Bitcamp 2025 
 
-Project Name
+Add Project Name
 by Alex and Jake
+
+Add Description 
