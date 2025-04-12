@@ -36,7 +36,7 @@ def results():
     return render_template("results.html", compatibility=compatibility, chart=chart)
 
 def generate_radar_chart(user, other):
-    labels = questions
+    labels = questions.copy()  # create a copy so we don't mess up the original
     values1 = user + [user[0]]
     values2 = other + [other[0]]
     labels += [labels[0]]
