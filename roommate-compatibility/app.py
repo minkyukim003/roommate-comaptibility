@@ -44,7 +44,7 @@ def generate_radar_chart(user, other):
     angles = np.linspace(0, 2 * np.pi, len(labels), endpoint =False).tolist()
     angles += angles[:1]
 
-    fig, ax = plt.subplots(subpllot_kw={'polar':True})
+    fig, ax = plt.subplots(subplot_kw={'polar':True})
     ax.plot(angles, values1, label='You')
     ax.plot(angles, values2, label='Other')
     ax.fill(angles, values1, alpha=0.25)
