@@ -36,10 +36,9 @@ def results():
     return render_template("results.html", compatibility=compatibility, chart=chart)
 
 def generate_radar_chart(user, other):
-    labels = questions.copy()  # create a copy so we don't mess up the original
+    labels = questions + [questions[0]]  # Create a new list without modifying the original
     values1 = user + [user[0]]
     values2 = other + [other[0]]
-    labels += [labels[0]]
 
     angles = np.linspace(0, 2 * np.pi, len(labels), endpoint =False).tolist()
     angles += angles[:1]
