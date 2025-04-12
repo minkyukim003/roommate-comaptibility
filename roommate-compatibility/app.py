@@ -30,12 +30,14 @@ def results():
     user_scores = [int(request.form[f"user_{i}"]) for i in range(len(questions))]
     other_scores = [int(request.form[f"other_{i}"]) for i in range(len(questions))]
 
-    diffs = [abs(u - o) for u, o in zip(user_scores,other_scores)]
+    diffs = [abs(u - o) for u, o in zip(user_scores, other_scores)]
     compatibility = max(0, 100 - sum(diffs) * 2)
     
     chart = generate_radar_chart(user_scores, other_scores)
+    summary = generate_personalized_summary(user_scores, other_scores) 
 
-    return render_template("results.html", compatibility=compatibility, chart=chart)
+    return render_template("results.html", compatibility=compatibility, chart=chart, summary=summary)
+
 
 def generate_radar_chart(user, other):
     num_vars = len(user)  # This will be 10
