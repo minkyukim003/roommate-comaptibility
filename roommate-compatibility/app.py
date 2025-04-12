@@ -65,6 +65,40 @@ def generate_radar_chart(user, other):
     plt.close(fig)
     return chart
 
+def generate_personalized_summary(user, other):
+    diffs = [abs(u - o) for u, o in zip(user, other)]
+    paired_scores = list(zip(questions, user, other, diffs))
+    paired_scores.sort(key=lambda x: x[3], reverse=True)
+
+    summary = ""
+
+    # Top 3 biggest differences
+    biggest_diffs = paired_scores[:3]
+    if any(d[3] >= 4 for d in biggest_diffs):
+        summary += "You and your potential roommate have notable differences in:\n"
+        for q, u, o, d in biggest_diffs:
+            summary += f"- **{q}**: You rated {u}, they rated {o}.\n"
+    else:
+        summary += "You and your potential roommate don’t have any major red flags in your preferences.\n"
+
+    # Top 3 strongest alignments
+    strongest_alignments = [x for x in paired_scores if x[3] <= 2][:3]
+    if strongest_alignments:
+        summary += "\nYou’re especially well-aligned on:\n"
+        for q, u, o, d in strongest_alignments:
+            summary += f"- **{q}**: You rated {u}, they rated {o}.\n"
+
+    # Overall take
+    total_diff = sum(diffs)
+    if total_diff <= 15:
+        summary += "\n🌟 You’re highly compatible overall — this could be a great match!"
+    elif total_diff <= 25:
+        summary += "\n⚖️ You have a few areas to work through, but nothing major. Communication is key!"
+    else:
+        summary += "\n🚨 There are some significant lifestyle differences — a good conversation beforehand is strongly recommended."
+
+    return summary
+
 
 if __name__ == "__main__":
     app.run(debug=True)
