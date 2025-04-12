@@ -15,7 +15,7 @@ questions = [
     "Financial Habits",
     "Pet Friendliness",
     "Cooking frequency",
-    "Work/Study hours"
+    "Work/Study hours",
     "Smoking Preferences"
 ]
 
