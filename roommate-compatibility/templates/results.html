@@ -7,9 +7,11 @@
     <h1>Compatibility Score: {{ compatibility }}%</h1>
     <img src="data:image/png;base64,{{ chart }}" alt="Radar Chart">
 
-    <h2>AI Compatibility Take</h2>
-    <pre>{{ summary }}</pre>
-
+    <div class="summary">
+        <h2>Personalized Analysis</h2>
+        <p>{{ summary | safe }}</p>
+    </div>
+    
     <a href="/"> go back now! </href>
 </body>
 </html>

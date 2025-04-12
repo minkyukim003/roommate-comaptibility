@@ -31,7 +31,8 @@ def results():
     other_scores = [int(request.form[f"other_{i}"]) for i in range(len(questions))]
 
     diffs = [abs(u - o) for u, o in zip(user_scores, other_scores)]
-    compatibility = max(0, 100 - sum(diffs) * 2)
+    compatibility = max(0, 100 - sum((u - o) ** 2 for u, o in zip(user_scores, other_scores)))
+
     
     chart = generate_radar_chart(user_scores, other_scores)
     summary = generate_personalized_summary(user_scores, other_scores) 
@@ -54,7 +55,7 @@ def generate_radar_chart(user, other):
     ax.fill(angles, values1, alpha=0.25)
     ax.fill(angles, values2, alpha=0.25)
     ax.set_xticks(angles[:-1])
-    ax.set_xticklabels(questions)
+    ax.set_xticklabels(questions, fontsize=10, ha='center') 
     ax.set_yticklabels([])
 
     ax.legend(loc='upper right', bbox_to_anchor=(1.1, 1.1))
@@ -67,7 +68,7 @@ def generate_radar_chart(user, other):
     plt.close(fig)
     return chart
 
-def generate_personalized_summary(user, other):
+def generate_personalized_summary(user, other, questions):
     diffs = [abs(u - o) for u, o in zip(user, other)]
     paired_scores = list(zip(questions, user, other, diffs))
     paired_scores.sort(key=lambda x: x[3], reverse=True)
