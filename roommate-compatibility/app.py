@@ -38,11 +38,13 @@ def results():
     return render_template("results.html", compatibility=compatibility, chart=chart)
 
 def generate_radar_chart(user, other):
-    labels = questions + [questions[0]]
+    num_vars = len(user)  # This will be 10
+    angles = np.linspace(0, 2 * np.pi, num_vars, endpoint=False).tolist()
+    angles += angles[:1]  # Close the loop
+
     values1 = user + [user[0]]
     values2 = other + [other[0]]
-
-    angles = np.linspace(0, 2 * np.pi, len(values1), endpoint=False).tolist()
+    labels = questions + [questions[0]]  
 
     fig, ax = plt.subplots(subplot_kw={'polar': True})
     ax.plot(angles, values1, label='You')
