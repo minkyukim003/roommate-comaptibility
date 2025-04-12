@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
-from models import db, User  # assuming User is in models.py
+from models import db, User
 from werkzeug.security import generate_password_hash, check_password_hash
 import matplotlib
 matplotlib.use('Agg')
