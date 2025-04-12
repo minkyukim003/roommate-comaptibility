@@ -1,7 +1,5 @@
-# bitcamp_change
+# Roommate Compatibility
 for Bitcamp 2025 
-
-Add Project Name
 by Alex and Jake
 
 Add Description 
