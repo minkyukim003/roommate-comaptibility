@@ -35,7 +35,7 @@ def results():
 
     
     chart = generate_radar_chart(user_scores, other_scores)
-    summary = generate_personalized_summary(user_scores, other_scores) 
+    summary = generate_personalized_summary(user_scores, other_scores, questions) 
 
     return render_template("results.html", compatibility=compatibility, chart=chart, summary=summary)
 
