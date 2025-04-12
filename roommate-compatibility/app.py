@@ -36,20 +36,19 @@ def results():
     return render_template("results.html", compatibility=compatibility, chart=chart)
 
 def generate_radar_chart(user, other):
-    labels = questions + [questions[0]]  # Create a new list without modifying the original
+    labels = questions + [questions[0]]
     values1 = user + [user[0]]
     values2 = other + [other[0]]
 
-    angles = np.linspace(0, 2 * np.pi, len(labels), endpoint =False).tolist()
-    angles += angles[:1]
+    angles = np.linspace(0, 2 * np.pi, len(values1), endpoint=False).tolist()
 
-    fig, ax = plt.subplots(subplot_kw={'polar':True})
+    fig, ax = plt.subplots(subplot_kw={'polar': True})
     ax.plot(angles, values1, label='You')
     ax.plot(angles, values2, label='Other')
     ax.fill(angles, values1, alpha=0.25)
     ax.fill(angles, values2, alpha=0.25)
     ax.set_xticks(angles[:-1])
-    ax.set_xticklabels(labels)
+    ax.set_xticklabels(questions)
     ax.set_yticklabels([])
 
     ax.legend(loc='upper right', bbox_to_anchor=(1.1, 1.1))
@@ -61,6 +60,7 @@ def generate_radar_chart(user, other):
     chart = base64.b64encode(buf.read()).decode('utf-8')
     plt.close(fig)
     return chart
+
 
 if __name__ == "__main__":
     app.run(debug=True)
