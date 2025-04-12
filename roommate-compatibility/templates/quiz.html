@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Roommate Compatibility</title>
+</head>
+<body>
+    <h1>Roommate Compatibility</h1>
+    <form method="POST" action="/results" onsubmit="console.log(new FormData(this));">
+        {% for q in questions %}
+        <label>{{ q }}</label><br>
+        You: <input type="range" name="user_{{ loop.index0 }}" min="1" max="10" step="1" oninput="showValue(this)" required>
+        <span>5</span><br>
+        Them: <input type="range" name ="other_{{ loop.index0 }}" min="1" max="10" step="1" oninput="showValue(this)" required>
+        <span>5</span><br><br>
+        {% endfor %}
+    <button type="submit">See Results</button>
+    </form>
+</body>
+<script>
+    //add scripts to show slider values. 
+    function showValue(slider){
+        slider.nextElementSibling.textContent = slider.value;
+    }
+</script>
+</html>
