@@ -137,8 +137,6 @@ def results():
 
     # Generate Radar Chart
     chart = generate_radar_chart(user_scores, other_scores)
-
-    # Generate the personalized summary based on score differences
     summary = generate_personalized_summary(user_scores, other_scores, questions)
 
     return render_template("results.html", compatibility=compatibility, chart=chart, summary=summary)
