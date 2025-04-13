@@ -26,7 +26,7 @@ class UserProfile(db.Model):
     major = db.Column(db.String(120))
     hobbies = db.Column(db.String(200))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    user = db.relationship('User', backref=db.backref('profile', uselist=False))
+    user = db.relationship('User', backref=db.backref('user_profile', uselist=False))
 
     # Quiz scores (assume values 1–5 or similar)
     cleanliness = db.Column(db.Integer)
