@@ -11,7 +11,9 @@ import io
 import base64
 
 app = Flask(__name__)
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///roommate.db"
 app.config["SECRET_KEY"] = "supersecretkey"
+
 db.init_app(app)
 migrate = Migrate(app, db)
 

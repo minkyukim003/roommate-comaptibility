@@ -19,10 +19,7 @@ class UserProfile(db.Model):
     major = db.Column(db.String(120))
     hobbies = db.Column(db.String(200))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-<<<<<<< HEAD
-=======
     user = db.relationship('User', backref=db.backref('profile', uselist=False))
->>>>>>> refs/remotes/origin/main
 
     user = db.relationship('User', back_populates='profile')  # FIXED HERE
 
