@@ -113,7 +113,7 @@ def results():
 
     compatibility = max(0, 100 - sum((u - o) ** 2 for u, o in zip(user_scores, other_scores)))
     chart = generate_radar_chart(user_scores, other_scores)
-    summary = generate_personlized_summary(user_scores, other_scores, questions)
+    summary = generate_personalized_summary(user_scores, other_scores, questions)
 
     return render_template("results.html", compatibility=compatibility, chart=chart, summary=summary)
 
