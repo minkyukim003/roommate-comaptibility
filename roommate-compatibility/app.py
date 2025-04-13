@@ -17,17 +17,17 @@ db.init_app(app)
 migrate = Migrate(app, db)
 
 questions = [
-    "Cleanliness",
-    "Sleep schedule",
-    "Noise Tolerance",
-    "Guest Frequency",
-    "Communication Style",
-    "Financial Habits",
-    "Pet Friendliness",
-    "Cooking frequency",
-    "Work/Study hours",
-    "Smoking Preferences"
-]
+        "How clean are you?",
+        "When do you usually go to sleep?",
+        "How tolerant are you of noise?",
+        "How often do you like having guests over?",
+        "How direct is your communication style?",
+        "How do you handle finances?",
+        "Do you want pets around?",
+        "How often do you cook?",
+        "How many hours do you work/study?",
+        "Do you smoke or mind smoking?"
+    ]
 
 @app.route("/")
 def index():
@@ -48,6 +48,11 @@ def register():
         db.session.add(user)
         db.session.commit()
         
+        # Create a default profile here after registration
+        profile = UserProfile(user_id=user.id, name="Default Name", major="Undecided", hobbies="None")
+        db.session.add(profile)
+        db.session.commit()
+
         session["user_id"] = user.id
         return redirect(url_for("profile_setup"))
     
@@ -75,20 +80,12 @@ def quiz():
         return redirect(url_for("login"))
 
     user = User.query.get(user_id)
-    profile = user.profile
 
-    questions = [
-        "How clean are you?",
-        "When do you usually go to sleep?",
-        "How tolerant are you of noise?",
-        "How often do you like having guests over?",
-        "How direct is your communication style?",
-        "How do you handle finances?",
-        "Do you want pets around?",
-        "How often do you cook?",
-        "How many hours do you work/study?",
-        "Do you smoke or mind smoking?"
-    ]
+    # Ensure the user has a profile before proceeding to quiz
+    if not user.profile:
+        return redirect(url_for("profile_setup"))
+
+    profile = user.profile
 
     if request.method == "POST":
         answers = [int(request.form[f"q{i}"]) for i in range(len(questions))]
@@ -116,24 +113,29 @@ def results():
     if not user_id:
         return redirect(url_for("login"))
 
-    # Get the current user and their profile
     user = User.query.get(user_id)
     user_profile = user.profile
 
-    # Get the selected user from the query parameter or session
-    selected_user_id = request.args.get("user_id")
-    if selected_user_id:
+    if not user_profile:
+        return "Please complete the quiz before viewing results."
+    
+    if request.method == "POST":
+        selected_user_id = request.form.get("other_user_id")
         other_user = User.query.get(selected_user_id)
     else:
-        # Default to comparing with the first user if none is selected
-        other_user = User.query.filter(User.id != user_id).first()
-
-    if not other_user or not other_user.profile:
-        return "No other user to compare with."
+        selected_user_id = request.args.get("user_id")
+        if selected_user_id:
+            other_user = User.query.get(selected_user_id)
+        else:
+            other_user = User.query.filter(User.id != user_id).first()
 
     other_profile = other_user.profile
+    if not other_profile:
+        return "The selected user has no profile."
     
-    # Get the scores of both users from their profiles
+    # Radar plot data
+    labels = questions
+
     user_scores = [
         user_profile.cleanliness,
         user_profile.sleep_schedule,
@@ -172,7 +174,6 @@ def results():
 
     return render_template("results.html", compatibility=compatibility, chart=chart, summary=summary)
 
-
 @app.route("/profile-setup", methods=["GET", "POST"])
 def profile_setup():
     if "user_id" not in session:
@@ -198,7 +199,7 @@ def generate_radar_chart(user, other):
 
     values1 = user + [user[0]]
     values2 = other + [other[0]]
-    labels = questions + [questions[0]]  
+    labels = questions + [questions[0]]  # Ensure the labels match the question list
 
     fig, ax = plt.subplots(subplot_kw={'polar': True})
     ax.plot(angles, values1, label='You')
