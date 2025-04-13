@@ -97,9 +97,9 @@ def read_line_to_list(filepath):
 def profile():
     #session['other_users'] = other_users
     value = read_line_to_list("./you.txt")
-    name = value[0]
-    major = value[1]
-    hobby = value[3]
+    name = value[2]
+    major = value[3]
+    hobby = value[4]
     return render_template("profile.html", name=name, major=major, hobby=hobby)
 
 def parse_answers_from_file(filename):
