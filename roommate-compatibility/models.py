@@ -13,11 +13,12 @@ class User(db.Model):
     profile = db.relationship("UserProfile", uselist=False, back_populates="user")
     quiz = db.relationship("QuizResponse", uselist=False, back_populates="user")
 
-    def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
     
-    def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
+    #def set_password(self, password):
+        #self.password_hash = generate_password_hash(password)
+    
+    #def check_password(self, password):
+        #return check_password_hash(self.password_hash, password)
 
 class UserProfile(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -38,13 +39,6 @@ class UserProfile(db.Model):
     cooking_frequency = db.Column(db.Integer)
     work_study_hours = db.Column(db.Integer)
     smoking_preferences = db.Column(db.Integer)
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100))
-    major = db.Column(db.String(100))
-    hobbies = db.Column(db.String(200))
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
-    user = db.relationship("User", back_populates="profile")
 
 class QuizResponse(db.Model):
     id = db.Column(db.Integer, primary_key=True)
