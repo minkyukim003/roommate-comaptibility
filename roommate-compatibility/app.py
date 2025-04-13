@@ -76,7 +76,7 @@ def quiz():
 
     return render_template("quiz.html", questions=questions)
 
-@app.route("/results", methods=["GET", "POST"])
+@app.route("/results")
 def results():
     user_id = session.get("user_id")
     if not user_id:
@@ -87,24 +87,15 @@ def results():
 
     if not user_profile:
         return "Please complete the quiz before viewing results."
-    
-    if request.method == "POST":
-        selected_user_id = request.form.get("other_user_id")
-        other_user = User.query.get(selected_user_id)
-    else:
-        selected_user_id = request.args.get("user_id")
-        if selected_user_id:
-            other_user = User.query.get(selected_user_id)
-        else:
-            other_user = User.query.filter(User.id != user_id).first()
+
+    # Always compare with a random user who has a profile and is not the current user
+    other_user = User.query.filter(User.id != user_id).join(UserProfile).first()
+    if not other_user:
+        return "No other users with profiles available for comparison yet."
 
     other_profile = other_user.profile
-    if not other_profile:
-        return "The selected user has no profile."
-    
-    # Radar plot data
-    labels = questions
 
+    # Scores
     user_scores = [
         user_profile.cleanliness,
         user_profile.sleep_schedule,
@@ -131,17 +122,12 @@ def results():
         other_profile.smoking_preferences
     ]
 
-    # Calculate Compatibility
-    diffs = [abs(u - o) for u, o in zip(user_scores, other_scores)]
     compatibility = max(0, 100 - sum((u - o) ** 2 for u, o in zip(user_scores, other_scores)))
-
-    # Generate Radar Chart
     chart = generate_radar_chart(user_scores, other_scores)
-
-    # Generate the personalized summary based on score differences
     summary = generate_personalized_summary(user_scores, other_scores, questions)
 
     return render_template("results.html", compatibility=compatibility, chart=chart, summary=summary)
+
 
 @app.route("/profile-setup", methods=["GET", "POST"])
 def profile_setup():
@@ -222,6 +208,7 @@ def generate_personalized_summary(user, other, questions):
         summary += "\n🚨 There are some significant lifestyle differences — a good conversation beforehand is strongly recommended."
 
     return summary
+
 
 @app.route("/logout")
 def logout():
