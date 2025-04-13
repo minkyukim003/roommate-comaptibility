@@ -45,7 +45,9 @@ def register():
         user.set_password(password)
         db.session.add(user)
         db.session.commit()
-        return redirect(url_for("login"))
+        
+        session["user_id"] = user.id
+        return redirect(url_for("profile_setup"))
     
     return render_template("register.html")
 
@@ -82,6 +84,23 @@ def results():
 
     return render_template("results.html", compatibility=compatibility, chart=chart, summary=summary)
 
+@app.route("/profile-setup", methods=["GET", "POST"])
+def profile_setup():
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+    
+    if request.method == "POST":
+        name = request.form["name"]
+        major = request.form["major"]
+        hobbies = request.form["hobbies"]
+
+        user = User.query.get(session["user_id"])
+        profile = UserProfile(name=name, major=major, hobbies=hobbies, user=user)
+        db.session.add(profile)
+        db.session.commit()
+        return redirect(url_for("quiz"))
+
+    return render_template("profile_setup.html")
 
 def generate_radar_chart(user, other):
     num_vars = len(user)  # This will be 10
