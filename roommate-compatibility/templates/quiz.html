@@ -1,50 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Roommate Compatibility</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8" />
+  <title>Roomlytics Quiz</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#76944C',
+            accent: '#C8DAA6',
+            dark: '#2F4858',
+          },
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+          },
+          keyframes: {
+            fadeIn: {
+              '0%': { opacity: '0', transform: 'translateY(10px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+          },
+          animation: {
+            fadeIn: 'fadeIn 1.5s ease-out forwards',
+          },
+        },
+      },
+    };
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
 </head>
-<body class="bg-gradient-to-br from-blue-100 to-purple-100 min-h-screen flex items-center justify-center p-6">
+<body class="bg-white text-dark font-sans">
 
-    <div class="bg-white shadow-2xl rounded-3xl max-w-4xl w-full p-10 space-y-10">
-        <h1 class="text-4xl font-extrabold text-center text-blue-700">🏠 Roommate Compatibility Quiz</h1>
-        <p class="text-center text-gray-600 text-lg">Rate each statement from 1 (strongly disagree) to 10 (strongly agree)</p>
-
-        <form method="POST" class="space-y-8">
-            {% for q in questions %}
-            {% set q_index = loop.index0 %}
-            <div class="bg-blue-50 border border-blue-200 p-6 rounded-xl shadow-inner">
-                <label class="block text-lg font-semibold text-blue-800 mb-4">{{ loop.index }}. {{ q }}</label>
-                <div class="flex flex-wrap justify-center gap-3">
-                    {% for i in range(1, 11) %}
-                    <label class="flex flex-col items-center text-sm font-medium text-gray-700">
-                        <input 
-                            type="radio" 
-                            name="q{{ q_index }}" 
-                            value="{{ i }}" 
-                            required 
-                            class="peer hidden"
-                        >
-                        <div class="w-10 h-10 flex items-center justify-center rounded-full border-2 border-gray-300 peer-checked:border-blue-600 peer-checked:bg-blue-500 peer-checked:text-white transition duration-200 cursor-pointer">
-                            {{ i }}
-                        </div>
-                    </label>
-                    {% endfor %}
-                </div>
-            </div>
-            {% endfor %}
-
-            <div class="text-center">
-                <button 
-                    type="submit" 
-                    class="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold py-3 px-8 rounded-xl shadow-lg transition duration-300"
-                >
-                    🚀 Submit Quiz
-                </button>
-            </div>
-        </form>
+  <!-- Navigation -->
+  <nav class="bg-white shadow-md sticky top-0 z-10">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <div class="flex items-center space-x-3">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Roomlytics Logo" class="h-10 w-auto opacity-0 animate-fadeIn" />
+      </div>
+      <div class="space-x-6">
+        <a href="{{ url_for('register') }}" class="text-dark hover:text-primary font-medium transition">Register</a>
+        <a href="{{ url_for('login') }}" class="text-dark hover:text-primary font-medium transition">Login</a>
+      </div>
     </div>
+  </nav>
+
+  <!-- Quiz Section -->
+  <section class="max-w-4xl mx-auto py-12 px-6">
+    <h2 class="text-3xl font-extrabold mb-8 text-center text-dark">Roommate Compatibility Quiz</h2>
+    
+    <form method="POST" class="space-y-10">
+      {% set labels = [
+        ("Very messy", "Neat freak"),
+        ("Very early", "Very late"),
+        ("Not tolerant", "Very tolerant"),
+        ("Rarely", "All the time"),
+        ("Indirect", "Very direct"),
+        ("Very casual", "Highly responsible"),
+        ("Prefer no pets", "Love pets around"),
+        ("Never cook", "Always cooking"),
+        ("Hardly at all", "All the time"),
+        ("Hate it / can't stand", "Okay with it / do it myself")
+      ] %}
+
+      {% for question in questions %}
+        {% set i = loop.index0 %}
+        {% set left = labels[i][0] %}
+        {% set right = labels[i][1] %}
+
+        <div class="bg-accent/20 p-6 rounded-xl shadow-sm animate-fadeIn">
+          <label class="block text-lg font-medium text-dark mb-2">{{ question }}</label>
+
+          <div class="flex flex-col gap-2">
+            <div class="flex justify-between text-sm text-dark/60 px-1">
+              <span>{{ left }}</span>
+              <span>{{ right }}</span>
+            </div>
+            <div class="flex flex-wrap justify-between">
+              {% for val in range(1, 11) %}
+                <label class="flex flex-col items-center w-8">
+                  <input type="radio" name="q{{ i }}" value="{{ val }}" required>
+                  <span class="text-sm">{{ val }}</span>
+                </label>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+
+      <div class="text-center pt-6">
+        <button type="submit" class="bg-primary text-white px-8 py-3 rounded-xl shadow hover:bg-primary/90 transition font-semibold">
+          Submit
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <!-- Footer -->
+  <footer class="text-center py-6 text-sm text-dark/50">
+    &copy; 2025 Roomlytics. All rights reserved.
+  </footer>
 
 </body>
 </html>
