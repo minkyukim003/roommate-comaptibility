@@ -1,74 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Results</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8">
+  <title>Results</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#76944C',
+            accent: '#C8DAA6',
+            dark: '#2F4858',
+          },
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+          },
+          keyframes: {
+            fadeIn: {
+              '0%': { opacity: '0', transform: 'translateY(10px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+          },
+          animation: {
+            fadeIn: 'fadeIn 1.5s ease-out forwards',
+          },
+        },
+      },
+    };
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center p-6">
+<body class="bg-white text-dark font-sans">
 
-    <div class="bg-white rounded-2xl shadow-lg max-w-3xl w-full p-8 space-y-6">
-        <div class="text-center">
-            <h1 class="text-3xl font-bold text-blue-600">Compatibility Score: {{ compatibility }}%</h1>
-            <h2 class="text-xl text-gray-700 mt-2">with {{ other_name }}</h2>
-        </div>
-
-        <div class="flex justify-center">
-            <img class="rounded-xl border border-gray-300 shadow-sm" src="data:image/png;base64,{{ chart }}" alt="Radar Chart">
-        </div>
-
-        <div class="summary mt-8">
-            <h2 class="text-2xl font-bold text-blue-700 mb-4">🔍 Personalized Analysis</h2>
-            
-            <div class="space-y-6">
-        
-                <!-- Biggest Differences Section -->
-                <div class="bg-red-50 border border-red-200 rounded-xl p-4 shadow-sm">
-                    <h3 class="text-lg font-semibold text-red-600 mb-2">🚨 Key Differences</h3>
-                    <ul class="list-disc list-inside text-gray-700 space-y-1">
-                        {% for line in summary.split('\n') if "notable differences" in line or line.startswith("- **") and "differences" in summary %}
-                        <li>{{ line | safe }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-        
-                <!-- Strong Alignments Section -->
-                <div class="bg-green-50 border border-green-200 rounded-xl p-4 shadow-sm">
-                    <h3 class="text-lg font-semibold text-green-600 mb-2">💚 Strong Alignments</h3>
-                    <ul class="list-disc list-inside text-gray-700 space-y-1">
-                        {% for line in summary.split('\n') if "well-aligned" in line or (line.startswith("- **") and "notable differences" not in summary) %}
-                        <li>{{ line | safe }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-        
-                <!-- Overall Takeaway -->
-                <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 shadow-sm">
-                    <h3 class="text-lg font-semibold text-blue-600 mb-2">🧠 Overall Compatibility</h3>
-                    <p class="text-gray-800">
-                        {% for line in summary.split('\n') if "🌟" in line or "⚖️" in line or "🚨" in line %}
-                            {{ line | safe }}
-                        {% endfor %}
-                    </p>
-                </div>
-        
-            </div>
-        </div>
-        
-
-        <div class="flex flex-col sm:flex-row justify-between items-center mt-6 space-y-4 sm:space-y-0 sm:space-x-4">
-            <form method="GET" action="/results">
-                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg shadow transition duration-200">
-                    🔄 Regenerate Result
-                </button>
-            </form>
-
-            <a href="/" class="text-blue-500 hover:text-blue-700 underline">
-                ⬅️ Back to Homepage
-            </a>
-        </div>
+  <!-- Navigation -->
+  <nav class="bg-white shadow-md sticky top-0 z-10">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <div class="flex items-center space-x-3">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Roomlytics Logo" class="h-10 w-auto opacity-0 animate-fadeIn" />
+      </div>
+      <div class="space-x-6">
+        <a href="{{ url_for('register') }}" class="text-dark hover:text-primary font-medium transition">Register</a>
+        <a href="{{ url_for('login') }}" class="text-dark hover:text-primary font-medium transition">Login</a>
+      </div>
     </div>
+  </nav>
+
+  <!-- Results Content -->
+  <section class="min-h-screen flex flex-col items-center justify-center px-6 py-12">
+    <div class="bg-white rounded-2xl shadow-lg max-w-3xl w-full p-8 space-y-6 border border-accent/40 animate-fadeIn">
+      <div class="text-center">
+        <h1 class="text-3xl font-bold text-primary">Compatibility Score: {{ compatibility }}%</h1>
+        <h2 class="text-xl text-dark mt-2">with {{ other_name }}</h2>
+      </div>
+
+      <div class="flex justify-center">
+        <img class="rounded-xl border border-gray-300 shadow-sm" src="data:image/png;base64,{{ chart }}" alt="Radar Chart">
+      </div>
+
+      <div class="summary mt-8">
+        <h2 class="text-2xl font-bold text-dark mb-4">🔍 Personalized Analysis</h2>
+
+        <div class="space-y-6">
+
+          <!-- Key Differences -->
+          <div class="bg-red-50 border border-red-200 rounded-xl p-4 shadow-sm">
+            <h3 class="text-lg font-semibold text-red-600 mb-2">🚨 Key Differences</h3>
+            <ul class="list-disc list-inside text-dark space-y-1">
+              {% for line in summary.split('\n') if "notable differences" in line or line.startswith("- **") and "differences" in summary %}
+              <li>{{ line | safe }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+
+          <!-- Strong Alignments -->
+          <div class="bg-green-50 border border-green-200 rounded-xl p-4 shadow-sm">
+            <h3 class="text-lg font-semibold text-green-600 mb-2">💚 Strong Alignments</h3>
+            <ul class="list-disc list-inside text-dark space-y-1">
+              {% for line in summary.split('\n') if "well-aligned" in line or (line.startswith("- **") and "notable differences" not in summary) %}
+              <li>{{ line | safe }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+
+          <!-- Overall Takeaway -->
+          <div class="bg-accent/30 border border-accent/60 rounded-xl p-4 shadow-sm">
+            <h3 class="text-lg font-semibold text-primary mb-2">🧠 Overall Compatibility</h3>
+            <p class="text-dark">
+              {% for line in summary.split('\n') if "🌟" in line or "⚖️" in line or "🚨" in line %}
+                {{ line | safe }}
+              {% endfor %}
+            </p>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="flex flex-col sm:flex-row justify-between items-center mt-6 space-y-4 sm:space-y-0 sm:space-x-4">
+        <form method="GET" action="/results">
+          <button type="submit" class="bg-primary hover:bg-primary/90 text-white font-medium py-2 px-4 rounded-lg shadow transition duration-200">
+            🔄 Regenerate Result
+          </button>
+        </form>
+
+        <a href="/" class="text-primary hover:underline font-medium">
+          ⬅️ Back to Homepage
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="text-center py-6 text-sm text-dark/50">
+    &copy; 2025 Roomlytics. All rights reserved.
+  </footer>
 
 </body>
 </html>
-

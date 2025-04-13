@@ -1,29 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Profile</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8">
+  <title>Profile</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#76944C',
+            accent: '#C8DAA6',
+            dark: '#2F4858',
+          },
+          fontFamily: {
+            sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+          },
+          keyframes: {
+            fadeIn: {
+              '0%': { opacity: '0', transform: 'translateY(10px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+          },
+          animation: {
+            fadeIn: 'fadeIn 1.5s ease-out forwards',
+          },
+        },
+      },
+    };
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center p-6">
+<body class="bg-white text-dark font-sans">
 
-    <div class="bg-white shadow-lg rounded-2xl max-w-md w-full p-8 space-y-6">
-        <div class="text-center">
-            <h1 class="text-3xl font-bold text-blue-600">Welcome, {{ name }}!</h1>
-        </div>
-
-        <div class="space-y-2">
-            <h2 class="text-xl font-semibold text-gray-800">📄 Profile Information</h2>
-            <p><strong>🎓 Major:</strong> {{ major }}</p>
-            <p><strong>🎯 Hobby:</strong> {{ hobby }}</p>
-        </div>
-
-        <form method="POST" action="{{ url_for('results') }}" class="text-center mt-4">
-            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-6 rounded-lg shadow transition duration-200">
-                🔍 Compare!
-            </button>
-        </form>
+  <!-- Navigation -->
+  <nav class="bg-white shadow-md sticky top-0 z-10">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <div class="flex items-center space-x-3">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Roomlytics Logo" class="h-10 w-auto opacity-0 animate-fadeIn" />
+      </div>
+      <div class="space-x-6">
+        <a href="{{ url_for('register') }}" class="text-dark hover:text-primary font-medium transition">Register</a>
+        <a href="{{ url_for('login') }}" class="text-dark hover:text-primary font-medium transition">Login</a>
+      </div>
     </div>
+  </nav>
+
+  <!-- Profile Card -->
+  <section class="flex items-center justify-center py-16 px-6">
+    <div class="bg-white shadow-lg rounded-2xl max-w-md w-full p-8 space-y-6 border border-accent/40 animate-fadeIn">
+      <div class="text-center">
+        <h1 class="text-3xl font-extrabold text-primary">Welcome, {{ name }}!</h1>
+      </div>
+
+      <div class="space-y-2 text-dark">
+        <h2 class="text-xl font-semibold">📄 Profile Information</h2>
+        <p><strong>🎓 Major:</strong> {{ major }}</p>
+        <p><strong>🎯 Hobby:</strong> {{ hobby }}</p>
+      </div>
+
+      <form method="POST" action="{{ url_for('results') }}" class="text-center pt-4">
+        <button type="submit" class="bg-primary hover:bg-primary/90 text-white font-semibold py-2 px-6 rounded-xl shadow transition duration-200">
+          🔍 Compare!
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="text-center py-6 text-sm text-dark/50">
+    &copy; 2025 Roomlytics. All rights reserved.
+  </footer>
 
 </body>
 </html>
