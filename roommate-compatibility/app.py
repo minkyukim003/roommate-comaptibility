@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
-from models import db, User
+from flask_migrate import Migrate
+from models import db, User, UserProfile
 from werkzeug.security import generate_password_hash, check_password_hash
 import matplotlib
 matplotlib.use('Agg')
@@ -13,6 +14,7 @@ app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///roommate.db"
 app.config["SECRET_KEY"] = "supersecretkey"
 db.init_app(app)
+migrate = Migrate(app, db)
 
 questions = [
     "Cleanliness",
@@ -66,23 +68,110 @@ def login():
 
     return render_template("login.html")
 
-@app.route("/quiz")
+@app.route("/quiz", methods=["GET", "POST"])
 def quiz():
-    return render_template("quiz.html", questions = questions)
+    user_id = session.get("user_id")
+    if not user_id:
+        return redirect(url_for("login"))
 
-@app.route("/results", methods=["POST"])
+    user = User.query.get(user_id)
+    profile = user.profile
+
+    questions = [
+        "How clean are you?",
+        "When do you usually go to sleep?",
+        "How tolerant are you of noise?",
+        "How often do you like having guests over?",
+        "How direct is your communication style?",
+        "How do you handle finances?",
+        "Do you want pets around?",
+        "How often do you cook?",
+        "How many hours do you work/study?",
+        "Do you smoke or mind smoking?"
+    ]
+
+    if request.method == "POST":
+        answers = [int(request.form[f"q{i}"]) for i in range(len(questions))]
+
+        # Store answers in the profile
+        profile.cleanliness = answers[0]
+        profile.sleep_schedule = answers[1]
+        profile.noise_tolerance = answers[2]
+        profile.guest_frequency = answers[3]
+        profile.communication_style = answers[4]
+        profile.financial_habits = answers[5]
+        profile.pet_friendliness = answers[6]
+        profile.cooking_frequency = answers[7]
+        profile.work_study_hours = answers[8]
+        profile.smoking_preferences = answers[9]
+
+        db.session.commit()
+        return redirect(url_for("results"))  # or dashboard, etc.
+
+    return render_template("quiz.html", questions=questions)
+
+@app.route("/results", methods=["GET", "POST"])
 def results():
-    user_scores = [int(request.form[f"user_{i}"]) for i in range(len(questions))]
-    other_scores = [int(request.form[f"other_{i}"]) for i in range(len(questions))]
+    user_id = session.get("user_id")
+    if not user_id:
+        return redirect(url_for("login"))
 
+    # Get the current user and their profile
+    user = User.query.get(user_id)
+    user_profile = user.profile
+
+    # Get the selected user from the query parameter or session
+    selected_user_id = request.args.get("user_id")
+    if selected_user_id:
+        other_user = User.query.get(selected_user_id)
+    else:
+        # Default to comparing with the first user if none is selected
+        other_user = User.query.filter(User.id != user_id).first()
+
+    if not other_user or not other_user.profile:
+        return "No other user to compare with."
+
+    other_profile = other_user.profile
+    
+    # Get the scores of both users from their profiles
+    user_scores = [
+        user_profile.cleanliness,
+        user_profile.sleep_schedule,
+        user_profile.noise_tolerance,
+        user_profile.guest_frequency,
+        user_profile.communication_style,
+        user_profile.financial_habits,
+        user_profile.pet_friendliness,
+        user_profile.cooking_frequency,
+        user_profile.work_study_hours,
+        user_profile.smoking_preferences
+    ]
+
+    other_scores = [
+        other_profile.cleanliness,
+        other_profile.sleep_schedule,
+        other_profile.noise_tolerance,
+        other_profile.guest_frequency,
+        other_profile.communication_style,
+        other_profile.financial_habits,
+        other_profile.pet_friendliness,
+        other_profile.cooking_frequency,
+        other_profile.work_study_hours,
+        other_profile.smoking_preferences
+    ]
+
+    # Calculate Compatibility
     diffs = [abs(u - o) for u, o in zip(user_scores, other_scores)]
     compatibility = max(0, 100 - sum((u - o) ** 2 for u, o in zip(user_scores, other_scores)))
 
-    
+    # Generate Radar Chart
     chart = generate_radar_chart(user_scores, other_scores)
-    summary = generate_personalized_summary(user_scores, other_scores, questions) 
+
+    # Generate the personalized summary based on score differences
+    summary = generate_personalized_summary(user_scores, other_scores, questions)
 
     return render_template("results.html", compatibility=compatibility, chart=chart, summary=summary)
+
 
 @app.route("/profile-setup", methods=["GET", "POST"])
 def profile_setup():
@@ -163,6 +252,19 @@ def generate_personalized_summary(user, other, questions):
         summary += "\n🚨 There are some significant lifestyle differences — a good conversation beforehand is strongly recommended."
 
     return summary
+
+@app.route("/user-selection")
+def user_selection():
+    user_id = session.get("user_id")
+    if not user_id:
+        return redirect(url_for("login"))
+    
+    if request.method == "POST":
+        selected_user_id = request.form.get("other_user_id")
+        return redirect(url_for("results", user_id=selected_user_id))
+
+    users = User.query.filter(User.id != user_id).all()  # Get users excluding the logged-in user
+    return render_template("user_selection.html", users=users)
 
 @app.route("/logout")
 def logout():

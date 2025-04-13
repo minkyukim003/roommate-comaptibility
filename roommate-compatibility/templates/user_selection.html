@@ -1,0 +1,9 @@
+<form action="{{ url_for('results') }}" method="POST">
+    <h2>Select a roommate to compare with:</h2>
+    <select name="other_user_id">
+        {% for user in users %}
+            <option value="{{ user.id }}">{{ user.username }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit">Compare</button>
+</form>

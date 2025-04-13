@@ -21,6 +21,25 @@ class User(db.Model):
 
 class UserProfile(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120))
+    major = db.Column(db.String(120))
+    hobbies = db.Column(db.String(200))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user = db.relationship('User', backref=db.backref('profile', uselist=False))
+
+    # Quiz scores (assume values 1–5 or similar)
+    cleanliness = db.Column(db.Integer)
+    sleep_schedule = db.Column(db.Integer)
+    noise_tolerance = db.Column(db.Integer)
+    guest_frequency = db.Column(db.Integer)
+    communication_style = db.Column(db.Integer)
+    financial_habits = db.Column(db.Integer)
+    pet_friendliness = db.Column(db.Integer)
+    cooking_frequency = db.Column(db.Integer)
+    work_study_hours = db.Column(db.Integer)
+    smoking_preferences = db.Column(db.Integer)
+
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
     major = db.Column(db.String(100))
     hobbies = db.Column(db.String(200))
