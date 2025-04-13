@@ -2,6 +2,11 @@
 for Bitcamp 2025 
 by Alex and Jake
 
+#Dependencies
+  - Flask
+  - Matplotlib
+  - TailwindCSS
+
 Roomlytics was inspired by our own college experiences, where we realized how challenging it can be to live with new roommates. From loud snorers and messy kitchens to mismatched sleep schedules, we saw firsthand how difficult cohabitation can be without real compatibility. Traditional roommate matching often only considers surface-level traits or availability, overlooking deeper lifestyle alignment. With Roomlytics, we wanted to build a more thoughtful, data-driven solution that analyzes user preferences across key lifestyle dimensions to provide insight and improve harmony in shared living spaces.
 
 Our project allows users to record their lifestyle preferences and housing criteria through a brief questionnaire. Once submitted, the system compares their responses with other profiles and calculates compatibility rates. Users then receive a visual representation—specifically, a radar chart—that clearly highlights areas of compatibility and potential friction, making it easier to evaluate shared living potential with another person.
