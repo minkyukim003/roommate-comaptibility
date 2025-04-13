@@ -2,10 +2,14 @@
 for Bitcamp 2025 
 by Alex and Jake
 
-#Dependencies
-  - Flask
-  - Matplotlib
-  - TailwindCSS
+from flask import Flask, render_template, request, redirect, url_for, session
+import random
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import numpy as np
+import io
+import base64
 
 Roomlytics was inspired by our own college experiences, where we realized how challenging it can be to live with new roommates. From loud snorers and messy kitchens to mismatched sleep schedules, we saw firsthand how difficult cohabitation can be without real compatibility. Traditional roommate matching often only considers surface-level traits or availability, overlooking deeper lifestyle alignment. With Roomlytics, we wanted to build a more thoughtful, data-driven solution that analyzes user preferences across key lifestyle dimensions to provide insight and improve harmony in shared living spaces.
 
