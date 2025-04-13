@@ -109,22 +109,11 @@ def results():
         user_profile.smoking_preferences
     ]
 
-    other_scores = [
-        other_profile.cleanliness,
-        other_profile.sleep_schedule,
-        other_profile.noise_tolerance,
-        other_profile.guest_frequency,
-        other_profile.communication_style,
-        other_profile.financial_habits,
-        other_profile.pet_friendliness,
-        other_profile.cooking_frequency,
-        other_profile.work_study_hours,
-        other_profile.smoking_preferences
-    ]
+    other_scores = [10] * 10
 
     compatibility = max(0, 100 - sum((u - o) ** 2 for u, o in zip(user_scores, other_scores)))
     chart = generate_radar_chart(user_scores, other_scores)
-    summary = generate_personalized_summary(user_scores, other_scores, questions)
+    summary = generate_personlized_summary(user_scores, other_scores, questions)
 
     return render_template("results.html", compatibility=compatibility, chart=chart, summary=summary)
 
