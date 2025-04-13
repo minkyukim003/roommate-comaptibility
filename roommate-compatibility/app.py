@@ -35,27 +35,6 @@ def index():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
-    #if request.method == "POST":
-    #    username = request.form["username"]
-    #    email = request.form["email"]
-    #    password = request.form["password"]
-
-    #    if User.query.filter_by(username=username).first():
-    #        return "Username already exists"
-
-    #    user = User(username=username, email=email)
-    #   user.set_password(password)
-    #    db.session.add(user)
-    #    db.session.commit()
-        
-        # Create a default profile here after registration
-    #    profile = UserProfile(user_id=user.id, name="Default Name", major="Undecided", hobbies="None")
-    #    db.session.add(profile)
-    #    db.session.commit()
-
-    #    session["user_id"] = user.id
-    #    return redirect(url_for("profile_setup"))
-    
     return render_template("register.html")
 
 @app.route("/login", methods=["GET", "POST"])
