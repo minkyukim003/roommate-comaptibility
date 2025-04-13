@@ -1,22 +1,50 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Roommate Compatibility</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h1>Roommate Compatibility</h1>
-    <form method="POST">
-        {% for q in questions %}
-        <label>{{ q }}</label><br>
-        <input type="range" name="q{{ loop.index0 }}" min="1" max="10" step="1" oninput="showValue(this)" required>
-        <span>5</span><br><br>
-        {% endfor %}
-        <button type="submit">Submit Quiz</button>
-    </form>
+<body class="bg-gradient-to-br from-blue-100 to-purple-100 min-h-screen flex items-center justify-center p-6">
+
+    <div class="bg-white shadow-2xl rounded-3xl max-w-4xl w-full p-10 space-y-10">
+        <h1 class="text-4xl font-extrabold text-center text-blue-700">🏠 Roommate Compatibility Quiz</h1>
+        <p class="text-center text-gray-600 text-lg">Rate each statement from 1 (strongly disagree) to 10 (strongly agree)</p>
+
+        <form method="POST" class="space-y-8">
+            {% for q in questions %}
+            {% set q_index = loop.index0 %}
+            <div class="bg-blue-50 border border-blue-200 p-6 rounded-xl shadow-inner">
+                <label class="block text-lg font-semibold text-blue-800 mb-4">{{ loop.index }}. {{ q }}</label>
+                <div class="flex flex-wrap justify-center gap-3">
+                    {% for i in range(1, 11) %}
+                    <label class="flex flex-col items-center text-sm font-medium text-gray-700">
+                        <input 
+                            type="radio" 
+                            name="q{{ q_index }}" 
+                            value="{{ i }}" 
+                            required 
+                            class="peer hidden"
+                        >
+                        <div class="w-10 h-10 flex items-center justify-center rounded-full border-2 border-gray-300 peer-checked:border-blue-600 peer-checked:bg-blue-500 peer-checked:text-white transition duration-200 cursor-pointer">
+                            {{ i }}
+                        </div>
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+
+            <div class="text-center">
+                <button 
+                    type="submit" 
+                    class="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold py-3 px-8 rounded-xl shadow-lg transition duration-300"
+                >
+                    🚀 Submit Quiz
+                </button>
+            </div>
+        </form>
+    </div>
+
 </body>
-<script>
-    function showValue(slider){
-        slider.nextElementSibling.textContent = slider.value;
-    }
-</script>
 </html>

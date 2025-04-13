@@ -1,5 +1,5 @@
-1|Alice|Computer Science|Reading,Hiking,Chess|7,5,6,4,8,7,6,5,9,3
-2|Bob|Biology|Cooking,Gaming,Soccer|6,6,5,4,7,6,5,7,8,2
-3|Clara|Psychology|Painting,Journaling,Yoga|9,8,7,6,5,4,3,2,1,10
-4|Daniel|Engineering|Biking,Robotics,Climbing|4,4,4,4,4,4,4,4,4,4
-5|Eva|Art History|Museum visits,Sketching,Theater|10,10,9,9,10,8,10,9,10,10
+0|Alice|Computer Science|Reading|7|5|6|4|8|7|6|5|9|3
+1|Bob|Biology|Cooking|6|6|5|4|7|6|5|7|8|2
+2|Clara|Psychology|Painting|9|8|7|6|5|4|3|2|1|10
+3|Daniel|Engineering|Biking|4|4|4|4|4|4|4|4|4|4
+4|Eva|Art History|Museum visits|10|10|9|9|10|8|10|9|10|10

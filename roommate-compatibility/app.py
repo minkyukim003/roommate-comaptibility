@@ -1,8 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-from models import db, User, UserProfile
-from werkzeug.security import generate_password_hash, check_password_hash
+import random
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -11,11 +8,7 @@ import io
 import base64
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///roommate.db"
 app.config["SECRET_KEY"] = "supersecretkey"
-
-db.init_app(app)
-migrate = Migrate(app, db)
 
 questions = [
         "How clean are you?",
@@ -34,58 +27,57 @@ questions = [
 def index():
     return render_template("index.html")
 
-@app.route("/register")
+def register_user(filepath, username, password):
+    data = [username, password]
+    f = open(filepath, 'w')
+
+    data_join = "|".join(data)
+    data_join = data_join + "|"
+
+    f.write(data_join)
+
+@app.route("/register", methods=["GET", "POST"])
 def register():
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        # Do something with the data — e.g., save to database
+        register_user("./you.txt", username, password)
+        
+        return redirect(url_for("profile_setup"))  # Or redirect, flash, etc.
     return render_template("register.html")
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
     return render_template("login.html")
 
+def write_answers(filepath, answers):
+    with open(filepath, 'a') as f:
+        answers_join = "|".join(str(i) for i in answers)
+        f.write(answers_join + "\n")  # optional newline
+
 @app.route("/quiz", methods=["GET", "POST"])
 def quiz():
-    user_id = session.get("user_id")
-    if not user_id:
-        return redirect(url_for("login"))
-
-    user = User.query.get(user_id)
-
-    # Ensure the user has a profile before proceeding to quiz
-    if not user.profile:
-        return redirect(url_for("profile_setup"))
-
-    profile = user.profile
-
+    #user_id = session.get("user_id")
+    #profile = user.profile
     if request.method == "POST":
         answers = [int(request.form[f"q{i}"]) for i in range(len(questions))]
-
         # Store answers in the profile
-        profile.cleanliness = answers[0]
-        profile.sleep_schedule = answers[1]
-        profile.noise_tolerance = answers[2]
-        profile.guest_frequency = answers[3]
-        profile.communication_style = answers[4]
-        profile.financial_habits = answers[5]
-        profile.pet_friendliness = answers[6]
-        profile.cooking_frequency = answers[7]
-        profile.work_study_hours = answers[8]
-        profile.smoking_preferences = answers[9]
-
-        db.session.commit()
-        return redirect(url_for("results"))  # or dashboard, etc.
-
+        write_answers("./you.txt", answers)
+        return redirect(url_for("profile"))  # or dashboard, etc.
     return render_template("quiz.html", questions=questions)
 
 def parse_sample_users(filepath):
     users = []
     with open(filepath, 'r') as f:
         for line in f:
-            key, name, major, hobbies, quiz = line.strip().split('|')
+            key, name, major, hobby, quiz = line.strip().split('|')
             users.append({
                 'key': key,
                 'name': name,
                 'major': major,
-                'hobbies': hobbies.split(','),
+                'hobby': hobby,
                 'quiz': list(map(int, quiz.split(',')))
             })
     return users
@@ -95,45 +87,76 @@ def assign_val():
     for user in other_users:
         user[0] = None
 
+def read_line_to_list(filepath):
+    with open(filepath, 'r') as f:
+        line = f.readline().strip()
+        values = line.split('|')
+        return values
+
 @app.route("/profile")
-def route():
-    session['other_users'] = other_users
-    return render_template("profile.html")
+def profile():
+    #session['other_users'] = other_users
+    value = read_line_to_list("./you.txt")
+    name = value[0]
+    major = value[1]
+    hobby = value[3]
+    return render_template("profile.html", name=name, major=major, hobby=hobby)
+
+def parse_answers_from_file(filename):
+    with open(filename, 'r') as f:
+        line = f.readline().strip()  # read the first line and remove newline
+        parts = line.split('|')
+        
+        # Assuming the quiz answers start from the 6th element (index 5 onward)
+        answers = [int(value) for value in parts[5:]]
+        return answers
+    
+def load_users_to_dict(filepath):
+    users = {}
+    with open(filepath, 'r') as f:
+        for line in f:
+            parts = line.strip().split('|')
+            user_id = int(parts[0])
+            name = parts[1]
+            major = parts[2]
+            hobby = parts[3]
+            answers = [int(x) for x in parts[4:]]
+            users[user_id] = {
+                'name': name,
+                'major': major,
+                'hobby': hobby,
+                'quiz': answers
+            }
+    return users
 
 
 @app.route("/results", methods=["GET", "POST"])
 def results():
-    user_id = session.get("user_id")
-    if not user_id:
-        return redirect(url_for("login"))
 
-    user = User.query.get(user_id)
-    user_profile = user.profile
+    other_users = load_users_to_dict("./users.txt")
 
-    if not user_profile:
-        return "Please complete the quiz before viewing results."
-
-    other_users = parse_sample_users("./users.txt")
-    #other_users = None
-
-    other_scores = other_users[0]['quiz']
-    other_name = other_users[0]['name']
-    
-    # Radar plot data
-    labels = questions
+    answers = parse_answers_from_file("./you.txt")
 
     user_scores = [
-        user_profile.cleanliness,
-        user_profile.sleep_schedule,
-        user_profile.noise_tolerance,
-        user_profile.guest_frequency,
-        user_profile.communication_style,
-        user_profile.financial_habits,
-        user_profile.pet_friendliness,
-        user_profile.cooking_frequency,
-        user_profile.work_study_hours,
-        user_profile.smoking_preferences
+        answers[0],
+        answers[1],
+        answers[2],
+        answers[3],
+        answers[4],
+        answers[5],
+        answers[6],
+        answers[7],
+        answers[8],
+        answers[9]
     ]
+
+    random_num = random.randint(0,4)
+
+    other_scores = other_users[random_num]['quiz']
+    other_name = other_users[random_num]['name']
+
+    # Radar plot data
+    labels = questions
 
     # Calculate Compatibility
     diffs = [abs(u - o) for u, o in zip(user_scores, other_scores)]
@@ -145,22 +168,21 @@ def results():
 
     return render_template("results.html", other_name=other_name, compatibility=compatibility, chart=chart, summary=summary)
 
+def add_attributes(filepath, name, major, hobby):
+    f = open(filepath, 'a')
+    data = [name, major, hobby]
+    data_join = "|".join(data)
+    data_join = data_join + "|"
+    f.write(data_join)
+
 @app.route("/profile-setup", methods=["GET", "POST"])
 def profile_setup():
-    if "user_id" not in session:
-        return redirect(url_for("login"))
-    
     if request.method == "POST":
         name = request.form["name"]
         major = request.form["major"]
-        hobbies = request.form["hobbies"]
-
-        user = User.query.get(session["user_id"])
-        profile = UserProfile(name=name, major=major, hobbies=hobbies, user=user)
-        db.session.add(profile)
-        db.session.commit()
+        hobby = request.form["hobby"]
+        add_attributes("./you.txt", name, major, hobby)
         return redirect(url_for("quiz"))
-
     return render_template("profile_setup.html")
 
 def generate_radar_chart(user, other, labels):

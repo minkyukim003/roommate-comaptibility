@@ -1,19 +1,74 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Results</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h1>Compatibility Score: {{ compatibility }}%</h1>
-    <h2>with {{ other_name }}</h2>
-    <img src="data:image/png;base64,{{ chart }}" alt="Radar Chart">
+<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center p-6">
 
-    <div class="summary">
-        <h2>Personalized Analysis</h2>
-        <p>{{ summary | safe }}</p>
+    <div class="bg-white rounded-2xl shadow-lg max-w-3xl w-full p-8 space-y-6">
+        <div class="text-center">
+            <h1 class="text-3xl font-bold text-blue-600">Compatibility Score: {{ compatibility }}%</h1>
+            <h2 class="text-xl text-gray-700 mt-2">with {{ other_name }}</h2>
+        </div>
+
+        <div class="flex justify-center">
+            <img class="rounded-xl border border-gray-300 shadow-sm" src="data:image/png;base64,{{ chart }}" alt="Radar Chart">
+        </div>
+
+        <div class="summary mt-8">
+            <h2 class="text-2xl font-bold text-blue-700 mb-4">🔍 Personalized Analysis</h2>
+            
+            <div class="space-y-6">
+        
+                <!-- Biggest Differences Section -->
+                <div class="bg-red-50 border border-red-200 rounded-xl p-4 shadow-sm">
+                    <h3 class="text-lg font-semibold text-red-600 mb-2">🚨 Key Differences</h3>
+                    <ul class="list-disc list-inside text-gray-700 space-y-1">
+                        {% for line in summary.split('\n') if "notable differences" in line or line.startswith("- **") and "differences" in summary %}
+                        <li>{{ line | safe }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+        
+                <!-- Strong Alignments Section -->
+                <div class="bg-green-50 border border-green-200 rounded-xl p-4 shadow-sm">
+                    <h3 class="text-lg font-semibold text-green-600 mb-2">💚 Strong Alignments</h3>
+                    <ul class="list-disc list-inside text-gray-700 space-y-1">
+                        {% for line in summary.split('\n') if "well-aligned" in line or (line.startswith("- **") and "notable differences" not in summary) %}
+                        <li>{{ line | safe }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+        
+                <!-- Overall Takeaway -->
+                <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 shadow-sm">
+                    <h3 class="text-lg font-semibold text-blue-600 mb-2">🧠 Overall Compatibility</h3>
+                    <p class="text-gray-800">
+                        {% for line in summary.split('\n') if "🌟" in line or "⚖️" in line or "🚨" in line %}
+                            {{ line | safe }}
+                        {% endfor %}
+                    </p>
+                </div>
+        
+            </div>
+        </div>
+        
+
+        <div class="flex flex-col sm:flex-row justify-between items-center mt-6 space-y-4 sm:space-y-0 sm:space-x-4">
+            <form method="GET" action="/results">
+                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg shadow transition duration-200">
+                    🔄 Regenerate Result
+                </button>
+            </form>
+
+            <a href="/" class="text-blue-500 hover:text-blue-700 underline">
+                ⬅️ Back to Homepage
+            </a>
+        </div>
     </div>
-    
-    <a href="/"> Homepage </href>
+
 </body>
 </html>
 

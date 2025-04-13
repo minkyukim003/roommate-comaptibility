@@ -3,17 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <title>Register</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-6">
 
-    <h1>Register</h1>
+    <div class="bg-white shadow-lg rounded-2xl max-w-md w-full p-8 space-y-6">
+        <h1 class="text-3xl font-bold text-blue-600 text-center">Create an Account</h1>
 
-    <form method="POST">
-        Username: <input name="username" required><br>
-        Email: <input name="email" type="email" required><br>
-        Password: <input name="password" type="password" required><br>
-        <button type="submit" onsubmit="">Register</button>
-    </form><br>
-    <a href="{{ url_for('quiz') }}"> test quiz html </a>
+        <form method="POST" class="space-y-4">
+            <div>
+                <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+                <input 
+                    type="text" 
+                    name="username" 
+                    id="username" 
+                    required 
+                    class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                >
+            </div>
+
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                <input 
+                    type="password" 
+                    name="password" 
+                    id="password" 
+                    required 
+                    class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                >
+            </div>
+
+            <button 
+                type="submit" 
+                class="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition duration-200 shadow"
+            >
+                🚀 Register
+            </button>
+        </form>
+    </div>
+
 </body>
 </html>
