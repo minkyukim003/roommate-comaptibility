@@ -256,15 +256,7 @@ def generate_personalized_summary(user, other, questions):
 
 @app.route("/user-selection")
 def user_selection():
-    user_id = session.get("user_id")
-    if not user_id:
-        return redirect(url_for("login"))
-    
-    if request.method == "POST":
-        selected_user_id = request.form.get("other_user_id")
-        return redirect(url_for("results", user_id=selected_user_id))
-
-    users = User.query.filter(User.id != user_id).all()  # Get users excluding the logged-in user
+    users = User.query.all()
     return render_template("user_selection.html", users=users)
 
 @app.route("/logout")
