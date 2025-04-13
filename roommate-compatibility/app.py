@@ -76,6 +76,20 @@ def quiz():
 
     return render_template("quiz.html", questions=questions)
 
+def parse_sample_users(filepath):
+    users = []
+    with open(filepath, 'r') as f:
+        for line in f:
+            name, major, hobbies, quiz = line.strip().split('|')
+            users.append({
+                'name': name,
+                'major': major,
+                'hobbies': hobbies.split(','),
+                'quiz': list(map(int, quiz.split(',')))
+            })
+    return users
+
+
 @app.route("/results", methods=["GET", "POST"])
 def results():
     user_id = session.get("user_id")
@@ -87,20 +101,11 @@ def results():
 
     if not user_profile:
         return "Please complete the quiz before viewing results."
-    
-    if request.method == "POST":
-        selected_user_id = request.form.get("other_user_id")
-        other_user = User.query.get(selected_user_id)
-    else:
-        selected_user_id = request.args.get("user_id")
-        if selected_user_id:
-            other_user = User.query.get(selected_user_id)
-        else:
-            other_user = User.query.filter(User.id != user_id).first()
 
-    other_profile = other_user.profile
-    if not other_profile:
-        return "The selected user has no profile."
+    other_users = parse_sample_users("./other_users.txt")
+
+    other_scores = other_users[0]['quiz']
+    other_name = other_users[0]['name']
     
     # Radar plot data
     labels = questions
