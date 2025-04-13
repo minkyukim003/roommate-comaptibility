@@ -2,10 +2,57 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Landing Page</title>
+    <title>Roomlytics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3FA796',
+                        accent: '#FFE194',
+                        dark: '#2F4858'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'ui-sans-serif', 'system-ui']
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 </head>
-<body>
-<h1> UNDER CONSTRUCTION </h1>
-<a href="{{ url_for('register') }}"> registration page </a>
+<body class="bg-white text-dark font-sans">
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-extrabold text-primary tracking-wide">Roomlytics</h1>
+            <div class="space-x-6">
+                <a href="{{ url_for('register') }}" class="text-dark hover:text-primary font-medium transition">Register</a>
+                <a href="{{ url_for('login') }}" class="text-dark hover:text-primary font-medium transition">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="flex items-center justify-center h-[85vh] text-center px-6 bg-gradient-to-b from-accent/40 to-white">
+        <div class="max-w-2xl">
+            <h2 class="text-5xl font-extrabold text-dark leading-tight mb-4">
+                Smarter Roommate Matches, <br> Backed by Insight
+            </h2>
+            <p class="text-lg text-dark/70 mb-6">
+                Roomlytics uses behavior-based compatibility to help you find your ideal roommate — no stress, just data-driven peace of mind.
+            </p>
+            <a href="{{ url_for('register') }}" class="inline-block bg-primary text-white px-8 py-3 rounded-xl shadow hover:bg-primary/90 transition font-semibold">
+                Get Started
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-center py-6 text-sm text-dark/50">
+        &copy; 2025 Roomlytics. All rights reserved.
+    </footer>
 </body>
 </html>
