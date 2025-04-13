@@ -76,6 +76,19 @@ def quiz():
 
     return render_template("quiz.html", questions=questions)
 
+def parse_sample_users(filepath):
+    users = []
+    with open(filepath, 'r') as f:
+        for line in f:
+            name, major, hobbies, quiz = line.strip().split('|')
+            users.append({
+                'name': name,
+                'major': major,
+                'hobbies': hobbies.split(','),
+                'quiz': list(map(int, quiz.split(',')))
+            })
+    return users
+
 @app.route("/results")
 def results():
     user_id = session.get("user_id")
@@ -92,6 +105,10 @@ def results():
     other_user = User.query.filter(User.id != user_id).join(UserProfile).first()
     if not other_user:
         return "No other users with profiles available for comparison yet."
+    
+    other_users = parse_sample_users("./other_users.txt")
+    #hardcoded user selection. 
+    other_scores = other_users[0]['quiz']
 
     other_profile = other_user.profile
 
@@ -108,8 +125,6 @@ def results():
         user_profile.work_study_hours,
         user_profile.smoking_preferences
     ]
-
-    other_scores = [10] * 10
 
     compatibility = max(0, 100 - sum((u - o) ** 2 for u, o in zip(user_scores, other_scores)))
     chart = generate_radar_chart(user_scores, other_scores)
