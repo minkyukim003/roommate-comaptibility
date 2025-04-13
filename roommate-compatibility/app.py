@@ -80,14 +80,25 @@ def parse_sample_users(filepath):
     users = []
     with open(filepath, 'r') as f:
         for line in f:
-            name, major, hobbies, quiz = line.strip().split('|')
+            key, name, major, hobbies, quiz = line.strip().split('|')
             users.append({
+                'key': key,
                 'name': name,
                 'major': major,
                 'hobbies': hobbies.split(','),
                 'quiz': list(map(int, quiz.split(',')))
             })
     return users
+
+def assign_val():
+    other_users = parse_sample_users("./users.txt")
+    for user in other_users:
+        user[0] = None
+
+@app.route("/profile")
+def route():
+    session['other_users'] = other_users
+    return render_template("profile.html")
 
 
 @app.route("/results", methods=["GET", "POST"])
@@ -102,7 +113,8 @@ def results():
     if not user_profile:
         return "Please complete the quiz before viewing results."
 
-    other_users = parse_sample_users("./other_users.txt")
+    other_users = parse_sample_users("./users.txt")
+    #other_users = None
 
     other_scores = other_users[0]['quiz']
     other_name = other_users[0]['name']
@@ -127,11 +139,11 @@ def results():
     diffs = [abs(u - o) for u, o in zip(user_scores, other_scores)]
     compatibility = max(0, 100 - sum((u - o) ** 2 for u, o in zip(user_scores, other_scores)))
 
-    # Generate Radar Chart
-    chart = generate_radar_chart(user_scores, other_scores)
+    short_labels = ["Clean", "Sleep", "Noise", "Guests", "Comm", "Fin", "Pets", "Cook", "Work", "Smoke"]
+    chart = generate_radar_chart(user_scores, other_scores, short_labels)
     summary = generate_personalized_summary(user_scores, other_scores, questions)
 
-    return render_template("results.html", compatibility=compatibility, chart=chart, summary=summary)
+    return render_template("results.html", other_name=other_name, compatibility=compatibility, chart=chart, summary=summary)
 
 @app.route("/profile-setup", methods=["GET", "POST"])
 def profile_setup():
@@ -151,22 +163,24 @@ def profile_setup():
 
     return render_template("profile_setup.html")
 
-def generate_radar_chart(user, other):
-    num_vars = len(user)  # This will be 10
+def generate_radar_chart(user, other, labels):
+    num_vars = len(user)  # should be 10
+    # Create angles for the 10 points
     angles = np.linspace(0, 2 * np.pi, num_vars, endpoint=False).tolist()
-    angles += angles[:1]  # Close the loop
 
+    # For plotting, complete the loop by appending the first point
     values1 = user + [user[0]]
     values2 = other + [other[0]]
-    labels = questions + [questions[0]]  # Ensure the labels match the question list
+    angles_loop = angles + [angles[0]]
 
     fig, ax = plt.subplots(subplot_kw={'polar': True})
-    ax.plot(angles, values1, label='You')
-    ax.plot(angles, values2, label='Other')
-    ax.fill(angles, values1, alpha=0.25)
-    ax.fill(angles, values2, alpha=0.25)
-    ax.set_xticks(angles[:-1])
-    ax.set_xticklabels(questions, fontsize=10, ha='center') 
+    ax.plot(angles_loop, values1, label='You')
+    ax.plot(angles_loop, values2, label='Other')
+    ax.fill(angles_loop, values1, alpha=0.25)
+    ax.fill(angles_loop, values2, alpha=0.25)
+
+    ax.set_xticks(angles)
+    ax.set_xticklabels(labels, fontsize=10, ha='center') 
     ax.set_yticklabels([])
 
     ax.legend(loc='upper right', bbox_to_anchor=(1.1, 1.1))
