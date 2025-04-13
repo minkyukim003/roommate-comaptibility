@@ -11,7 +11,7 @@ class User(db.Model):
     password_hash = db.Column(db.String(128))
 
     profile = db.relationship("UserProfile", uselist=False, back_populates="user")
-    quiz = db.relationship("QuizResponse", uselist=False, back_populates="user")
+    #quiz = db.relationship("QuizResponse", uselist=False, back_populates="user")
 
 class UserProfile(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -20,7 +20,6 @@ class UserProfile(db.Model):
     hobbies = db.Column(db.String(200))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user = db.relationship('User', backref=db.backref('profile', uselist=False))
-
     user = db.relationship('User', back_populates='profile')  # FIXED HERE
 
     # Quiz scores

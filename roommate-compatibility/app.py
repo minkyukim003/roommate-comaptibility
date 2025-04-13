@@ -223,11 +223,6 @@ def generate_personalized_summary(user, other, questions):
 
     return summary
 
-@app.route("/user-selection")
-def user_selection():
-    users = User.query.all()
-    return render_template("user_selection.html", users=users)
-
 @app.route("/logout")
 def logout():
     session.pop("user_id", None)
